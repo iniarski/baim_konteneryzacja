@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 
 const app = express();
 const PORT = 4000;
@@ -12,6 +13,8 @@ let posts = [
 
 // Middleware to parse JSON requests
 app.use(bodyParser.json());
+
+app.use(cors())
 
 // Endpoint to get all posts
 app.get('/posts', (req, res) => {
