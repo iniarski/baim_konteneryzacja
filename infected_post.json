@@ -1,0 +1,4 @@
+{
+"title" : "Some unsafe html",
+"content" : "nothing to see here<script>alert('Something not nice')</script>"
+}
