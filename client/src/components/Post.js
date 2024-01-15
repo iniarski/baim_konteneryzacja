@@ -2,9 +2,13 @@ import InnerHTML from 'dangerously-set-html-content'
 
 function Post(post) {
     return (
-        <div key={post.id}>
-            <h3><InnerHTML html={post.title} /></h3>
+        <div className="col s12 m6">
+        <div key={post.id} className='card grey darken-2'>
+            <div className="card-content">
+            <h3 className='card-title'><InnerHTML html={post.title} /></h3>
             <p><InnerHTML html={post.content} /></p>
+            </div>
+        </div>
         </div>
     )
 }

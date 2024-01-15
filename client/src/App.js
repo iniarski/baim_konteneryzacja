@@ -38,18 +38,22 @@ class App extends Component {
     );
 
     return(
-    <div>
-      <h1>World best posting service</h1>
+    <div className='blue-grey lighten-1 white-text'>
+      <nav><div className="nav-wrapper grey darken-2"><div className='brand-logo'>World best posting service</div></div></nav>
+      <div className="center container">
       <PostForm apiUrl = {this.state.apiUrl} fetchPosts = {this.fetchPosts} />
+      <div className="container">
       <form>
         <label>
           API URL:
-          <input type="text" value={this.state.apiUrl} onChange={this.handleUpdate} id="apiUrl" required />
+          <input type="text" value={this.state.apiUrl} onChange={this.handleUpdate} id="apiUrl" required className='indigo lighten-4'/>
         </label>
       </form>
+      </div>
       <div>
-      <button onClick={this.fetchPosts}>Refresh posts</button>
-        {postList}
+      <button onClick={this.fetchPosts} className='btn light-blue'>Refresh posts</button>
+        <div className="row">{postList}</div>
+      </div>
       </div>
     </div>
   )}

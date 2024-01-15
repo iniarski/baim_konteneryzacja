@@ -36,20 +36,22 @@ class PostForm extends Component {
 
     render() {
         return (
+          <div>
             <form onSubmit={this.handleSubmit}>
-            <h2>Add New Post</h2>
+            <h3>Add New Post</h3>
               <label>
                 Title:
-                <input type="text" value={this.state.title} onChange={this.handleUpdate} id="title" required />
+                <input type="text" value={this.state.title} onChange={this.handleUpdate} id="title" required className='indigo lighten-4'/>
               </label>
               <br />
               <label>
                 Content:
-                <textarea value={this.state.content} onChange={this.handleUpdate} id="content" required />
+                <textarea value={this.state.content} onChange={this.handleUpdate} id="content" required className='indigo lighten-4'/>
               </label>
               <br />
-              <button type="submit">Add Post</button>
+              <button type="submit" className='btn light-blue'>Add Post</button>
             </form>
+          </div>
         )
     }
 }
