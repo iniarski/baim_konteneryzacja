@@ -1,0 +1,35 @@
+{
+    "people": [
+      {
+        "name": "Jan Janowski",
+        "age": 30,
+        "address": {
+          "street": "Janowska 12",
+          "city": "Janów Lubelski"
+        },
+        "email": "janjan@jan.jn",
+        "phone": "45785436"
+      },
+      {
+        "name": "Krzystof Kononowicz",
+        "age": 60,
+        "address": {
+          "street": "Szkolna 17",
+          "city": "Białystok"
+        },
+        "email": "krzystof.kononowicz@interia.pl",
+        "phone": "67785433"
+      },
+      {
+        "name": "Jadwiga Hymel",
+        "age": 79,
+        "address": {
+          "street": "Łączna 43",
+          "city": "Lipinki Łóżyckie"
+        },
+        "email": "",
+        "phone": "12745536"
+      }
+    ]
+  }
+  
