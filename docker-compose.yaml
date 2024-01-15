@@ -1,0 +1,12 @@
+version: '3'
+services:
+  baim_api:
+    build: ./api
+    container_name: baim_api_c
+    ports:
+      - '4000:4000'
+  baim_client:
+    build: ./client
+    container_name: baim_client_c
+    ports:
+      - '3000:3000'
