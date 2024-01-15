@@ -114,3 +114,60 @@ Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
 Spróbuj połączyć się z api lub clientem, czy jest to możliwe?
 
 ### Zadanie 4: flitracja `iptables`
+
+Wyobraźmy sobie że w przysłości chcielibyśmy rozwną aplikacje o nowe funkcjonalnośc, które wymagałyby komunikacji pomiędzy klientem a api. Wtedy nie zadziałalaby aplikacja z wyłączonym icc. W tym celu oldfiltrujemy ruch do api za pomocą iptables.
+
+Wyłącz aplikację i usuń sieć
+```
+docker-compose down
+docker network rm baim_net
+```
+
+W `docker-compsoe.yaml` zmień ustawienia sieci:
+```
+
+networks:
+  baim_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.1.0/24
+``` 
+Nadaj kontenerom adresy IP:
+* api - 172.16.1.2
+* client - 172.16.1.3
+* intruder - dowolny inny niż .1-3
+
+```
+    networks:
+      baim_net:
+        ipv4_address: 172.16.1.x
+```
+
+Do Dockerfile api dodaj w odpowiednim miejscu (przed zmianą użytkownika)
+```
+RUN iptables -A INPUT -s 172.16.1.1 -j ACCEPT \
+    && iptables -A INPUT -s 172.16.1.3 -j ACCEPT \
+    && iptables -A INPUT -s 172.16.1.0/24 ! -s 172.16.1.1 -j DROP \
+    && iptables-save > /etc/iptables/rules.v4    
+```
+
+Urucjom aplikację: `docker-compose up`
+
+Wejdź w terminal kontenerów klienta i intruza i sprawdź czy łączysz się z api
+
+W odpowiedzi wyślij `docker-compsoe.yaml` i `Dockerfile` api
+
+Gratulujemy dotarcia do końca i dzeki za uwagę
+
+```
+                    ##        .            
+              ## ## ##       ==            
+           ## ## ## ##      ===            
+       /""""""""""""""""\___/ ===        
+  ~~~ {~~ ~~~~ ~~~ ~~~~ ~~ ~ /  ===- ~~~   
+       \______ o          __/            
+         \    \        __/             
+          \____\______/                
+```
