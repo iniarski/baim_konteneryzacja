@@ -51,7 +51,7 @@ class App extends Component {
       </form>
       </div>
       <div>
-      <button onClick={this.fetchPosts} className='btn light-blue'>Refresh posts</button>
+      <button onClick={this.fetchPosts} className='btn-large light-blue'>Refresh posts</button>
         <div className="row">{postList}</div>
       </div>
       </div>

@@ -28,10 +28,8 @@ class PostForm extends Component {
                 title: '',
                 content: ''
             })
-          })
+          }).then(response => {this.props.fetchPosts()})
           .catch(error => console.error('Error adding post:', error));
-
-          this.props.fetchPosts()
       };
 
     render() {
@@ -49,7 +47,7 @@ class PostForm extends Component {
                 <textarea value={this.state.content} onChange={this.handleUpdate} id="content" required className='indigo lighten-4'/>
               </label>
               <br />
-              <button type="submit" className='btn light-blue'>Add Post</button>
+              <button type="submit" className='btn-large light-blue'>Add Post</button>
             </form>
           </div>
         )
