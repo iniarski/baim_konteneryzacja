@@ -1,5 +1,8 @@
-# parent image
 FROM node:21-alpine
+
+RUN adduser -D -u 1001 baim
+
+USER baim
 
 WORKDIR /app
 
@@ -10,10 +13,5 @@ RUN npm install
 COPY . .
 
 EXPOSE 4000
-
-RUN useradd -m -d /home/baim -s /bin/bash baim
-
-USER baim
-
 
 CMD ["npm", "start"]
