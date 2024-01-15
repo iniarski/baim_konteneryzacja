@@ -53,7 +53,7 @@ Zabdaj z jakiego adresu IP są wysyłane zapyania do api
 Do pliku `api/index.js` dodaj następujący kod:
 ```
 app.use((req, res, next) => {
-  const clientIp = req.ipInfo.clientIp;
+  const clientIp = req.ip;
   console.log(`Request from IP: ${clientIp}`);
   next();
 });
