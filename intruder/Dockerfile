@@ -5,4 +5,4 @@ FROM alpine:latest
 
 # skopiuj wszystkie pliki
 
-# zainstaluj curl (apk add)
+# zainstaluj curl (apk add) RUN czy CMD?
