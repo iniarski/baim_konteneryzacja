@@ -7,31 +7,35 @@ Nasza aplikacja składa się z dwóch części, które będą działać w oddzie
 * api - server przechowujący posty na endpoincie /posts Można za jego pomocą odczytać aktualne posty metodą GET lub dodać nowy metodą POST
 * client - aplikacja webowa wyświetlająca aktualne posty i umożliwiająca dodanie nowego
 
-### Zadanie 1: Dockerfile
+## Zadanie 1: Dockerfile
 
 W folderze intruder są pliki za pomocą których stowrzymy kontener "intruza", z którego przprowadzimy atak na aplikację. Stwórz Dockerfile bazujący na obrazie `alpine:latest`, który:
 * przejdzie do folderu jsons
+* stworzy użytkownika baim i zmień się na niego
 * skopiuje pliki z folderu intruder
     - uwaga - plik sensitive.json zawiera wrażliwe dane osobowe - uniknij skopiowania go do obrazu kontenera - [wskazówka z dokumentacji Dockera](https://docs.docker.com/build/building/context/#dockerignore-files)
 * zainstaluje curl - przyda się później (`apk add curl`)
     - Uzyjesz instrukcji [RUN czy CMD](https://betterstack.com/community/questions/difference-between-run-and-cmd-in-dockerfile/)?
-* stworzy użytkownika baim i zmień się na niego
+* na końcu zostaw `CMD ["tail", "-f", "/dev/null"]`
+    - Dla ciekawych: [Why run tail -f /dev/null to keep the container running?](https://github.com/docker/getting-started/issues/201)
 
 Następnie stwórz obraz: 
 
 `docker build -t nazwa_obrazu:tag_opcjonalnie ścieżka/do/folderu/z/Dockerfile`
 
-Oraz kontener:
+Następnie uruchamiamy aplikację. W folderze z docker-compose.yaml wykonaj `docker-compose up`
 
-`docker run --name nazwa_kontenera --rm -it nazwa_obraz:tag_jeśli_nadaliśmy`
+Tworzymy kontener intruza:
+
+`docker run --name nazwa_kontenera --rm -it --network baim-konteneryzacja_default nazwa_obraz:tag_jeśli_nadaliśmy`
 
 Wyjaśnienie flag:
 * --name: nadanie nazwy kontenerowi
 * --rm: kontener zostanie automatycznie usunięty po tym jak go zatrzymamy
 * -i: tryb interaktywny
 * -t: utworzenie pseudo-terminala, w połączeniu z -i uruchamiają sesję w terminalu kontenera
+* --network: dołączenie do sieci stworzonej przez `docker-compose`
 
-Następnie uruchamiamy aplikację. W folderze z docker-compose.yaml wykonaj `docker-compose up`
 
 Sprawdź jakie adres IP ma kontener z api (baim_api_c): 
 `docker inspect baim_api_c | grep IPAddres` lub `docker inspect baim_api_c | findstr "IPAddres"` na Windowsie
@@ -42,7 +46,33 @@ Wykonaj to samo polecenie na swoim komputerze. Czy zadziałało? Czy jest łącz
 
 W odpowiedzi wyślij pliki które posłużyły do stworzenia kontnera.
 
-### Zadanie 2: `docker-compose`
+### Dla ambitnych
+
+Zabdaj z jakiego adresu IP są wysyłane zapyania do api
+
+Do pliku `api/index.js` dodaj następujący kod:
+```
+app.use((req, res, next) => {
+  const clientIp = req.ipInfo.clientIp;
+  console.log(`Request from IP: ${clientIp}`);
+  next();
+});
+```
+
+Stwórz obraz: `docker build -t nazwa_obrazu api`
+I uruchom kontener `docker run --name nazwa_kontenera --rm -p 4000:4000 nazwa_obrazu`
+
+Teraz zobaczysz adresy IP z których przychodzą zapytania
+
+Wejdź na http://localhost:4000/posts
+
+Z innego urządzenia (np. telefonu jeśli korzystasz z WiFi) wejdź na http://adres_ip_twojego_komputera:4000/posts
+
+Czy IP się różni?
+
+Więcej o sieciach w Dockerze: [Understanding Docker Bridge Network](https://medium.com/@augustineozor/understanding-docker-bridge-network-6e499da50f65)
+
+## Zadanie 2: `docker-compose`
 
 docker-compose pozwala na zautomatyzownaie tworzenia obrazów i kontenerów
 
@@ -69,6 +99,8 @@ W odpowiedzi wyślij plik docker_compose.yaml
 
 Przeprowadzimy prosty atak na XSS na aplikację
 
+Otwórz [aplikację klienta](http://localhost:3000)
+
 Sprawdź adres IP kontenera z api
 
 Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
@@ -85,9 +117,9 @@ Aplikacja sanityzuje dane które wysyła do api, ale nie sanityzuje danych któr
 
 `curl -X POST -H "Content-Type: application/json" --data @infected_post.json http://ip_kontenera:4000/posts`
 
-Czyt ten atak się powiódł?
+Czy ten atak się powiódł?
 
-### Zadanie 3: Wyłączenie icc
+## Zadanie 3: Wyłączenie icc
 
 Wyłacz aplikację: 
 
@@ -113,51 +145,7 @@ Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
 
 Spróbuj połączyć się z api lub clientem, czy jest to możliwe?
 
-### Zadanie 4: flitracja `iptables`
-
-Wyobraźmy sobie że w przysłości chcielibyśmy rozwną aplikacje o nowe funkcjonalnośc, które wymagałyby komunikacji pomiędzy klientem a api. Wtedy nie zadziałalaby aplikacja z wyłączonym icc. W tym celu oldfiltrujemy ruch do api za pomocą iptables.
-
-Wyłącz aplikację i usuń sieć
-```
-docker-compose down
-docker network rm baim_net
-```
-
-W `docker-compsoe.yaml` zmień ustawienia sieci:
-```
-
-networks:
-  baim_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.16.1.0/24
-``` 
-Nadaj kontenerom adresy IP:
-* api - 172.16.1.2
-* client - 172.16.1.3
-* intruder - dowolny inny niż .1-3
-
-```
-    networks:
-      baim_net:
-        ipv4_address: 172.16.1.x
-```
-
-Do Dockerfile api dodaj w odpowiednim miejscu (przed zmianą użytkownika)
-```
-RUN iptables -A INPUT -s 172.16.1.1 -j ACCEPT \
-    && iptables -A INPUT -s 172.16.1.3 -j ACCEPT \
-    && iptables -A INPUT -s 172.16.1.0/24 ! -s 172.16.1.1 -j DROP \
-    && iptables-save > /etc/iptables/rules.v4    
-```
-
-Urucjom aplikację: `docker-compose up`
-
-Wejdź w terminal kontenerów klienta i intruza i sprawdź czy łączysz się z api
-
-W odpowiedzi wyślij `docker-compsoe.yaml` i `Dockerfile` api
+W odpowiedzi wyślij `docker-compose.yaml`
 
 Gratulujemy dotarcia do końca i dzeki za uwagę
 
