@@ -14,7 +14,7 @@ W folderze intruder są pliki za pomocą których stowrzymy kontener "intruza", 
 * stworzy użytkownika baim i zmień się na niego
 * skopiuje pliki z folderu intruder
     - uwaga - plik sensitive.json zawiera wrażliwe dane osobowe - uniknij skopiowania go do obrazu kontenera - [wskazówka z dokumentacji Dockera](https://docs.docker.com/build/building/context/#dockerignore-files)
-* zainstaluje curl - przyda się później (`apk add curl`)
+* zainstaluje curl i nmap - przyda się później (`apk add curl nmap`)
     - Uzyjesz instrukcji [RUN czy CMD](https://betterstack.com/community/questions/difference-between-run-and-cmd-in-dockerfile/)?
 * na końcu zostaw `CMD ["tail", "-f", "/dev/null"]`
     - Dla ciekawych: [Why run tail -f /dev/null to keep the container running?](https://github.com/docker/getting-started/issues/201)
@@ -36,6 +36,11 @@ Wyjaśnienie flag:
 * -t: utworzenie pseudo-terminala, w połączeniu z -i uruchamiają sesję w terminalu kontenera
 * --network: dołączenie do sieci stworzonej przez `docker-compose`
 
+Sprawdź w jakiej sieci działa kontener intruza używając `ifconfig`
+
+Zeskanuj tą siec za pomocą nmap
+
+`nmap -p- -oG - 172.xxx.xxx.xxx/maska`
 
 Sprawdź jakie adres IP ma kontener z API (baim_api_c): 
 `docker inspect baim_api_c | grep IPAddres` lub `docker inspect baim_api_c | findstr "IPAddres"` na Windowsie
@@ -44,7 +49,7 @@ W kontenrze z intruzem wykonaj `curl IP_kontera:4000/posts`, czy API zadziałał
 
 Wykonaj to samo polecenie na swoim komputerze. Czy zadziałało? Czy jest łączność z tym adresem IP? Jak myślisz dlaczego?
 
-W odpowiedzi wyślij pliki które posłużyły do stworzenia kontnera.
+W odpowiedzi wyślij pliki które posłużyły do stworzenia kontnera i wynik skan `nmap`.
 
 ### Dla ambitnych
 
@@ -143,7 +148,7 @@ Zapisz zmiany i urucho aplikację `docker-compose up`
 
 Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
 
-Spróbuj połączyć się z API lub clientem, czy jest to możliwe?
+Spróbuj połączyć się z API lub clientem, czy jest to możliwe? Zeskanuj sieć `nmap`, które adresy IP są dostępne?
 
 W odpowiedzi wyślij `docker-compose.yaml`
 

@@ -7,7 +7,7 @@ FROM alpine:latest
 
 # skopiuj wszystkie pliki
 
-# zainstaluj curl (apk add) RUN czy CMD?
+# zainstaluj curl i nmap (apk add) RUN czy CMD?
 
 # na koniec
 CMD ["tail", "-f", "/dev/null"]
