@@ -4,7 +4,7 @@ Na dzisiejszych labach zajmiecie się technologią konteneryzacji. Dowiecie się
 ### Aplikacja:
 
 Nasza aplikacja składa się z dwóch części, które będą działać w oddzielnych kontnenrach:
-* api - server przechowujący posty na endpoincie /posts Można za jego pomocą odczytać aktualne posty metodą GET lub dodać nowy metodą POST
+* API - server przechowujący posty na endpoincie /posts Można za jego pomocą odczytać aktualne posty metodą GET lub dodać nowy metodą POST
 * client - aplikacja webowa wyświetlająca aktualne posty i umożliwiająca dodanie nowego
 
 ## Zadanie 1: Dockerfile
@@ -37,10 +37,10 @@ Wyjaśnienie flag:
 * --network: dołączenie do sieci stworzonej przez `docker-compose`
 
 
-Sprawdź jakie adres IP ma kontener z api (baim_api_c): 
+Sprawdź jakie adres IP ma kontener z API (baim_api_c): 
 `docker inspect baim_api_c | grep IPAddres` lub `docker inspect baim_api_c | findstr "IPAddres"` na Windowsie
 
-W kontenrze z intruzem wykonaj `curl IP_kontera:4000/posts`, czy api zadziałało zgodnie z tym czego sie spodziewałeś?
+W kontenrze z intruzem wykonaj `curl IP_kontera:4000/posts`, czy API zadziałało zgodnie z tym czego sie spodziewałeś?
 
 Wykonaj to samo polecenie na swoim komputerze. Czy zadziałało? Czy jest łączność z tym adresem IP? Jak myślisz dlaczego?
 
@@ -48,7 +48,7 @@ W odpowiedzi wyślij pliki które posłużyły do stworzenia kontnera.
 
 ### Dla ambitnych
 
-Zabdaj z jakiego adresu IP są wysyłane zapyania do api
+Zabdaj z jakiego adresu IP są wysyłane zapyania do API
 
 Do pliku `api/index.js` dodaj następujący kod:
 ```
@@ -101,7 +101,7 @@ Przeprowadzimy prosty atak na XSS na aplikację
 
 Otwórz [aplikację klienta](http://localhost:3000)
 
-Sprawdź adres IP kontenera z api
+Sprawdź adres IP kontenera z API
 
 Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
 
@@ -113,7 +113,7 @@ Czy post pojawia się u klienta?
 
 W aplikacji spróbuj wysłać post z kodem JS np. `<script>alert('XSS');</script>`, czy atak się powiódł?
 
-Aplikacja sanityzuje dane które wysyła do api, ale nie sanityzuje danych które otrzymuje. Teraz wyślij 'zainfekowany' json
+Aplikacja sanityzuje dane które wysyła do API, ale nie sanityzuje danych które otrzymuje. Teraz wyślij 'zainfekowany' json
 
 `curl -X POST -H "Content-Type: application/json" --data @infected_post.json http://ip_kontenera:4000/posts`
 
@@ -130,7 +130,7 @@ W docker-compose.yaml stwórz sieć z wyłączoną komunikacją między kontener
 networks:
   baim_net:
     driver: bridge
-    options:
+    driver_opts:
       com.docker.network.bridge.enable_icc: "false"
 ```
 Dołącz kontenery do sieci, do każdego z nich dodaj:
@@ -143,7 +143,7 @@ Zapisz zmiany i urucho aplikację `docker-compose up`
 
 Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
 
-Spróbuj połączyć się z api lub clientem, czy jest to możliwe?
+Spróbuj połączyć się z API lub clientem, czy jest to możliwe?
 
 W odpowiedzi wyślij `docker-compose.yaml`
 
