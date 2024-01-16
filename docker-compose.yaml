@@ -5,11 +5,23 @@ services:
     container_name: baim_api_c
     ports:
       - '4000:4000'
+    networks:
+      - baim_net
   baim_client:
     build: ./client
     container_name: baim_client_c
     ports:
       - '3000:3000'
+    networks:
+      - baim_net
   baim_intruder:
     build: ./intruder
     container_name: baim_intruder_c
+    networks:
+      - baim_net
+
+networks:
+  baim_net:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.enable_icc: "false"
