@@ -10,3 +10,6 @@ services:
     container_name: baim_client_c
     ports:
       - '3000:3000'
+  baim_intruder:
+    build: ./intruder
+    container_name: baim_intruder_c
