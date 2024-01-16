@@ -10,12 +10,12 @@ Nasza aplikacja składa się z dwóch części, które będą działać w oddzie
 ## Zadanie 1: Dockerfile
 
 W folderze intruder są pliki za pomocą których stowrzymy kontener "intruza", z którego przprowadzimy atak na aplikację. Stwórz Dockerfile bazujący na obrazie `alpine:latest`, który:
-* przejdzie do folderu jsons
-* stworzy użytkownika baim i zmień się na niego
-* skopiuje pliki z folderu intruder
-    - uwaga - plik sensitive.json zawiera wrażliwe dane osobowe - uniknij skopiowania go do obrazu kontenera - [wskazówka z dokumentacji Dockera](https://docs.docker.com/build/building/context/#dockerignore-files)
 * zainstaluje curl i nmap - przyda się później (`apk add curl nmap`)
     - Uzyjesz instrukcji [RUN czy CMD](https://betterstack.com/community/questions/difference-between-run-and-cmd-in-dockerfile/)?
+* stworzy użytkownika baim i zmień się na niego
+* przejdzie do folderu jsons
+* skopiuje pliki z folderu intruder
+    - uwaga - plik sensitive.json zawiera wrażliwe dane osobowe - uniknij skopiowania go do obrazu kontenera - [wskazówka z dokumentacji Dockera](https://docs.docker.com/build/building/context/#dockerignore-files)
 * na końcu zostaw `CMD ["tail", "-f", "/dev/null"]`
     - Dla ciekawych: [Why run tail -f /dev/null to keep the container running?](https://github.com/docker/getting-started/issues/201)
 
@@ -27,20 +27,21 @@ Następnie uruchamiamy aplikację. W folderze z docker-compose.yaml wykonaj `doc
 
 Tworzymy kontener intruza:
 
-`docker run --name nazwa_kontenera --rm -it --network baim-konteneryzacja_default nazwa_obraz:tag_jeśli_nadaliśmy`
+`docker run --name nazwa_kontenera --rm -d --network baim_konteneryzacja_default nazwa_obraz:tag_jeśli_nadaliśmy`
 
 Wyjaśnienie flag:
 * --name: nadanie nazwy kontenerowi
 * --rm: kontener zostanie automatycznie usunięty po tym jak go zatrzymamy
-* -i: tryb interaktywny
-* -t: utworzenie pseudo-terminala, w połączeniu z -i uruchamiają sesję w terminalu kontenera
+* -d: detached - nasz terminal nie zostanie zablokowany
 * --network: dołączenie do sieci stworzonej przez `docker-compose`
+
+Wejdź do terminala intruza `docker exec -it nazwa_kontenera /bin/sh`
 
 Sprawdź w jakiej sieci działa kontener intruza używając `ifconfig`
 
 Zeskanuj tą siec za pomocą nmap
 
-`nmap -p- -oG - 172.xxx.xxx.xxx/maska`
+`nmap -p- 172.xxx.xxx.xxx/maska` (wskazówka - możesz użyć maski 24 zamiast 16 - nmap wykona się szybciej)
 
 Sprawdź jakie adres IP ma kontener z API (baim_api_c): 
 `docker inspect baim_api_c | grep IPAddres` lub `docker inspect baim_api_c | findstr "IPAddres"` na Windowsie
@@ -79,7 +80,7 @@ Więcej o sieciach w Dockerze: [Understanding Docker Bridge Network](https://med
 
 ## Zadanie 2: `docker-compose`
 
-docker-compose pozwala na zautomatyzownaie tworzenia obrazów i kontenerów
+Jak zapiewne zauważyłeś tworzenie obrazów i kontenrów "z palca" jast skompkikowanie i czasochłonne. Zadanie to ułatwa man `docker-compose`
 
 Wyłącz aplikację usuwając obrazy  oraz kontener z intruzem i jego obraz
 ```
@@ -88,7 +89,7 @@ docker rm baim_intruder_c -f //usunięcie kontnenera intruza
 docker rmi baim_intruder // usunięcie obrazu intruza
 ```
 
-dołącz intruza do pliku docker-compose:
+dołącz intruza do `services` w pliku `docker-compose.yaml`:
 ```
 services:
   nazwa_obrazu:

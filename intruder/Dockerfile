@@ -1,5 +1,6 @@
 # parent image
 FROM alpine:latest
+# zainstaluj curl i nmap (apk add) RUN czy CMD?
 
 # uwórz użytkownika baim i zmień się na niego
 
@@ -7,7 +8,6 @@ FROM alpine:latest
 
 # skopiuj wszystkie pliki
 
-# zainstaluj curl i nmap (apk add) RUN czy CMD?
 
 # na koniec
 CMD ["tail", "-f", "/dev/null"]
