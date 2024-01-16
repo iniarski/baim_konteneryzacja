@@ -84,9 +84,9 @@ Jak zapiewne zauważyłeś tworzenie obrazów i kontenrów "z palca" jast skompl
 
 Wyłącz aplikację usuwając obrazy  oraz kontener z intruzem i jego obraz
 ```
+docker stop kontener_intruza // obraz zostanie usunięty bo użyliśmy flagi --rm
+docker rmi obraz_intruza // usunięcie obrazu intruza
 docker-compose down --rmi all //usunięcie kontenerów i obrazów stowrzonych przez compose
-docker rm baim_intruder_c -f //usunięcie kontnenera intruza
-docker rmi baim_intruder // usunięcie obrazu intruza
 ```
 
 dołącz intruza do `services` w pliku `docker-compose.yaml`:
