@@ -80,7 +80,7 @@ Więcej o sieciach w Dockerze: [Understanding Docker Bridge Network](https://med
 
 ## Zadanie 2: `docker-compose`
 
-Jak zapiewne zauważyłeś tworzenie obrazów i kontenrów "z palca" jast skompkikowanie i czasochłonne. Zadanie to ułatwa man `docker-compose`
+Jak zapiewne zauważyłeś tworzenie obrazów i kontenrów "z palca" jast skomplikowanie i czasochłonne. Zadanie to ułatwia nam `docker-compose`
 
 Wyłącz aplikację usuwając obrazy  oraz kontener z intruzem i jego obraz
 ```
